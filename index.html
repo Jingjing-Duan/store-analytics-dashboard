@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Analytics Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Azure Analytics Dashboard</p>
+        <h1>Store Analytics Dashboard</h1>
+        <p class="subtitle">
+          Data from Azure Function + Blob Storage
+        </p>
+      </div>
+      <div class="hero-badge">Cloud Project</div>
+    </header>
+
+    <section class="status-bar" id="status">
+      Loading data...
+    </section>
+
+    <section class="cards">
+      <div class="card revenue">
+        <div class="card-label">Total Revenue</div>
+        <div class="card-value" id="totalRevenue">-</div>
+      </div>
+
+      <div class="card orders">
+        <div class="card-label">Total Orders</div>
+        <div class="card-value" id="totalOrders">-</div>
+      </div>
+
+      <div class="card cart">
+        <div class="card-label">Add to Cart</div>
+        <div class="card-value" id="addToCart">-</div>
+      </div>
+
+      <div class="card abandon">
+        <div class="card-label">Cart Abandons</div>
+        <div class="card-value" id="cartAbandons">-</div>
+      </div>
+
+      <div class="card conversion">
+        <div class="card-label">Conversion Rate</div>
+        <div class="card-value" id="conversionRate">-</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Raw JSON Preview</h2>
+        <span class="panel-tag">Live API Response</span>
+      </div>
+      <pre id="rawJson">Waiting for data...</pre>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
