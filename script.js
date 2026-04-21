@@ -6,30 +6,48 @@ function updateStatus(message) {
 }
 
 function updateDashboard(data) {
-  const events = Array.isArray(data) ? data : [];
+  const events = data || {};
 
-  const orders = events.filter(e => e.event_type === "order_placed");
-  const addToCart = events.filter(e => e.event_type === "add_to_cart");
-  const cartAbandons = events.filter(e => e.event_type === "cart_abandon");
+  const orders = events.totalorder;
+  const revenue = events.totalrevenue;
+  const conversion = events.conversion;
+  const riskProduct = events.riskstatus || [];
+  const pageProduct = events.price || [];
+  const abandonProduct = events.abandon || [];
 
-  const totalRevenue = orders.reduce((sum, order) => {
-    return sum + (order.order_value || 0);
-  }, 0);
+  document.getElementById("totalRevenue").textContent =
+    "$" + (revenue?.Revenue || 0).toFixed(2);
 
-  const totalOrders = orders.length;
-  const addToCartCount = addToCart.length;
-  const cartAbandonCount = cartAbandons.length;
+  document.getElementById("totalOrders").textContent =
+    orders?.NumOrders || 0;
 
-  const conversionRate =
-    addToCartCount > 0
-      ? ((totalOrders / addToCartCount) * 100).toFixed(1) + "%"
-      : "0%";
+  document.getElementById("conversionRate").textContent =
+    ((conversion?.conversionRate || 0) * 100).toFixed(1) + "%";
 
-  document.getElementById("totalRevenue").textContent = "$" + totalRevenue.toFixed(2);
-  document.getElementById("totalOrders").textContent = totalOrders;
-  document.getElementById("addToCart").textContent = addToCartCount;
-  document.getElementById("cartAbandons").textContent = cartAbandonCount;
-  document.getElementById("conversionRate").textContent = conversionRate;
+  const riskList = document.getElementById("risk-list");
+  riskList.innerHTML = "";
+  riskProduct.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = `Order ID: ${item.order_id}, Risk Status: ${item.riskStatus}`;
+    riskList.appendChild(li);
+  });
+
+  const pageList = document.getElementById("page-list");
+  pageList.innerHTML = "";
+  pageProduct.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = `Product ID: ${item.product_id}, Page Score: ${item.page_score}`;
+    pageList.appendChild(li);
+  });
+
+  const cartList = document.getElementById("cart-list");
+  cartList.innerHTML = "";
+  abandonProduct.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent =
+      `Customer ID: ${item.customer_id}, State: ${item.trueAbandon}, Rate: ${item.abandon_rate}`;
+    cartList.appendChild(li);
+  });
 
   document.getElementById("rawJson").textContent = JSON.stringify(data, null, 2);
 }
