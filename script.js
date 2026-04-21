@@ -8,46 +8,73 @@ function updateStatus(message) {
 function updateDashboard(data) {
   const events = data || {};
 
-  const orders = events.totalorder;
-  const revenue = events.totalrevenue;
-  const conversion = events.conversion;
-  const riskProduct = events.riskstatus || [];
-  const pageProduct = events.price || [];
-  const abandonProduct = events.abandon || [];
+  const orders = Number(events.totalorder || 0);
+  const revenue = Number(events.totalrevenue || 0);
+  const conversion = events.conversion || {};
+  const riskProduct = Array.isArray(events.riskstatus) ? events.riskstatus : [];
+  const pageProduct = Array.isArray(events.price) ? events.price : [];
+  const abandonProduct = Array.isArray(events.abandon) ? events.abandon : [];
+
+  const totalAdds = pageProduct.reduce((sum, item) => {
+    return sum + Number(item.total_adds || 0);
+  }, 0);
+
+  const totalAbandons = abandonProduct.length;
 
   document.getElementById("totalRevenue").textContent =
-    "$" + (revenue?.Revenue || 0).toFixed(2);
+    "$" + revenue.toFixed(2);
 
-  document.getElementById("totalOrders").textContent =
-    orders?.NumOrders || 0;
+  document.getElementById("totalOrders").textContent = orders;
+
+  document.getElementById("addToCart").textContent = totalAdds;
+
+  document.getElementById("cartAbandons").textContent = totalAbandons;
 
   document.getElementById("conversionRate").textContent =
-    ((conversion?.conversionRate || 0) * 100).toFixed(1) + "%";
+    ((conversion.conversionRate || 0) * 100).toFixed(1) + "%";
 
   const riskList = document.getElementById("risk-list");
   riskList.innerHTML = "";
-  riskProduct.forEach(item => {
+  if (riskProduct.length === 0) {
     const li = document.createElement("li");
-    li.textContent = `Order ID: ${item.order_id}, Risk Status: ${item.riskStatus}`;
+    li.textContent = "No risk status data available.";
     riskList.appendChild(li);
-  });
+  } else {
+    riskProduct.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = `Order ID: ${item.order_id}, Risk Status: ${item.riskStatus}`;
+      riskList.appendChild(li);
+    });
+  }
 
   const pageList = document.getElementById("page-list");
   pageList.innerHTML = "";
-  pageProduct.forEach(item => {
+  if (pageProduct.length === 0) {
     const li = document.createElement("li");
-    li.textContent = `Product ID: ${item.product_id}, Page Score: ${item.page_score}`;
+    li.textContent = "No page score data available.";
     pageList.appendChild(li);
-  });
+  } else {
+    pageProduct.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = `Product ID: ${item.product_id}, Page Score: ${item.page_score}`;
+      pageList.appendChild(li);
+    });
+  }
 
   const cartList = document.getElementById("cart-list");
   cartList.innerHTML = "";
-  abandonProduct.forEach(item => {
+  if (abandonProduct.length === 0) {
     const li = document.createElement("li");
-    li.textContent =
-      `Customer ID: ${item.customer_id}, State: ${item.trueAbandon}, Rate: ${item.abandon_rate}`;
+    li.textContent = "No abandon data available.";
     cartList.appendChild(li);
-  });
+  } else {
+    abandonProduct.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent =
+        `Customer ID: ${item.customer_id}, State: ${item.trueAbandon}, Rate: ${item.abandon_rate}`;
+      cartList.appendChild(li);
+    });
+  }
 
   document.getElementById("rawJson").textContent = JSON.stringify(data, null, 2);
 }

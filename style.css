@@ -135,7 +135,8 @@ h1 {
   border-radius: 24px;
   padding: 24px;
   box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  margin-bottom: 10px;
 }
 
 .panel-header {
